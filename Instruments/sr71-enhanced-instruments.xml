@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<!--
+  Enhanced SR-71 Cockpit Instrumentation
+  Includes CIT gauges, inlet spike indicators, turbo-ramjet status, and fuel management displays
+-->
+
+<PropertyList>
+
+  <!-- Compressor Inlet Temperature Gauge -->
+  <instrument>
+    <name>CIT_Engine_0</name>
+    <type>analog-gauge</type>
+    <x>150</x>
+    <y>200</y>
+    <w>80</w>
+    <h>80</h>
+    <property>systems/sr71/cit-engine-0-degc</property>
+    <min>0</min>
+    <max>500</max>
+    <red-line>427</red-line>
+    <yellow-line>400</yellow-line>
+    <label>CIT L</label>
+    <units>°C</units>
+  </instrument>
+  
+  <instrument>
+    <name>CIT_Engine_1</name>
+    <type>analog-gauge</type>
+    <x>250</x>
+    <y>200</y>
+    <w>80</w>
+    <h>80</h>
+    <property>systems/sr71/cit-engine-1-degc</property>
+    <min>0</min>
+    <max>500</max>
+    <red-line>427</red-line>
+    <yellow-line>400</yellow-line>
+    <label>CIT R</label>
+    <units>°C</units>
+  </instrument>
+  
+  <!-- Inlet Spike Position Indicators -->
+  <instrument>
+    <name>Inlet_Spike_L</name>
+    <type>vertical-bar</type>
+    <x>100</x>
+    <y>150</y>
+    <w>20</w>
+    <h>100</h>
+    <property>systems/sr71/inlet-spike-pos-0</property>
+    <min>0</min>
+    <max>1</max>
+    <label>SPIKE L</label>
+  </instrument>
+  
+  <instrument>
+    <name>Inlet_Spike_R</name>
+    <type>vertical-bar</type>
+    <x>380</x>
+    <y>150</y>
+    <w>20</w>
+    <h>100</h>
+    <property>systems/sr71/inlet-spike-pos-1</property>
+    <min>0</min>
+    <max>1</max>
+    <label>SPIKE R</label>
+  </instrument>
+  
+  <!-- Inlet Efficiency Indicators -->
+  <instrument>
+    <name>Inlet_Eff_L</name>
+    <type>digital-display</type>
+    <x>50</x>
+    <y>100</y>
+    <w>60</w>
+    <h>30</h>
+    <property>systems/sr71/inlet-efficiency-0</property>
+    <format>%.2f</format>
+    <label>INLET EFF L</label>
+  </instrument>
+  
+  <instrument>
+    <name>Inlet_Eff_R</name>
+    <type>digital-display</type>
+    <x>390</x>
+    <y>100</y>
+    <w>60</w>
+    <h>30</h>
+    <property>systems/sr71/inlet-efficiency-1</property>
+    <format>%.2f</format>
+    <label>INLET EFF R</label>
+  </instrument>
+  
+  <!-- Turbo-Ramjet Mode Indicator -->
+  <instrument>
+    <name>Ramjet_Mode</name>
+    <type>status-light</type>
+    <x>200</x>
+    <y>50</y>
+    <w>100</w>
+    <h>40</h>
+    <property>systems/sr71/turbo-ramjet-mode</property>
+    <on-color>green</on-color>
+    <off-color>gray</off-color>
+    <label>RAMJET MODE</label>
+  </instrument>
+  
+  <!-- Bypass Ratio Indicators -->
+  <instrument>
+    <name>Bypass_Ratio_L</name>
+    <type>horizontal-bar</type>
+    <x>50</x>
+    <y>300</y>
+    <w>80</w>
+    <h>20</h>
+    <property>systems/sr71/bypass-ratio-0</property>
+    <min>0</min>
+    <max>0.6</max>
+    <label>BYPASS L</label>
+  </instrument>
+  
+  <instrument>
+    <name>Bypass_Ratio_R</name>
+    <type>horizontal-bar</type>
+    <x>370</x>
+    <y>300</y>
+    <w>80</w>
+    <h>20</h>
+    <property>systems/sr71/bypass-ratio-1</property>
+    <min>0</min>
+    <max>0.6</max>
+    <label>BYPASS R</label>
+  </instrument>
+  
+  <!-- Fuel Management Display -->
+  <instrument>
+    <name>Fuel_Transfer</name>
+    <type>status-light</type>
+    <x>150</x>
+    <y>350</y>
+    <w>100</w>
+    <h>30</h>
+    <property>systems/sr71/fuel-transfer-active</property>
+    <on-color>amber</on-color>
+    <off-color>gray</off-color>
+    <label>FUEL XFER</label>
+  </instrument>
+  
+  <!-- Center of Gravity Indicator -->
+  <instrument>
+    <name>CG_Position</name>
+    <type>horizontal-bar</type>
+    <x>200</x>
+    <y>400</y>
+    <w>100</w>
+    <h>20</h>
+    <property>fdm/jsbsim/inertia/cg-x-in</property>
+    <min>-100</min>
+    <max>100</max>
+    <label>CG POS</label>
+  </instrument>
+  
+  <!-- Flight Envelope Protection Warnings -->
+  <instrument>
+    <name>Unstart_Warning</name>
+    <type>warning-light</type>
+    <x>100</x>
+    <y>450</y>
+    <w>80</w>
+    <h>30</h>
+    <property>systems/sr71/unstart-protection</property>
+    <blink-rate>2</blink-rate>
+    <label>UNSTART</label>
+  </instrument>
+  
+  <instrument>
+    <name>Mach_Limit_Warning</name>
+    <type>warning-light</type>
+    <x>320</x>
+    <y>450</y>
+    <w>80</w>
+    <h>30</h>
+    <property>systems/sr71/mach-limit-active</property>
+    <blink-rate>3</blink-rate>
+    <label>MACH LMT</label>
+  </instrument>
+  
+  <!-- Climb-Dive Procedure Status -->
+  <instrument>
+    <name>Climb_Dive_Phase</name>
+    <type>multi-state-display</type>
+    <x>200</x>
+    <y>500</y>
+    <w>100</w>
+    <h>30</h>
+    <property>systems/sr71/climb-dive-phase</property>
+    <states>
+      <state value="0">INACTIVE</state>
+      <state value="1">DIVING</state>
+      <state value="2">ACCEL</state>
+      <state value="3">CLIMBING</state>
+    </states>
+    <label>C-D PROC</label>
+  </instrument>
+  
+  <!-- System Health Indicator -->
+  <instrument>
+    <name>System_Health</name>
+    <type>analog-gauge</type>
+    <x>50</x>
+    <y>500</y>
+    <w>60</w>
+    <h>60</h>
+    <property>systems/sr71/system-health</property>
+    <min>0</min>
+    <max>1</max>
+    <green-range>0.8-1.0</green-range>
+    <yellow-range>0.6-0.8</yellow-range>
+    <red-range>0.0-0.6</red-range>
+    <label>SYS HLTH</label>
+  </instrument>
+  
+  <!-- Enhanced Mach Meter with Transition Indicators -->
+  <instrument>
+    <name>Enhanced_Mach_Meter</name>
+    <type>analog-gauge</type>
+    <x>250</x>
+    <y>300</y>
+    <w>100</w>
+    <h>100</h>
+    <property>velocities/mach</property>
+    <min>0</min>
+    <max>4</max>
+    <yellow-line>2.2</yellow-line>  <!-- Ramjet transition -->
+    <red-line>3.53</red-line>      <!-- Unstart limit -->
+    <max-line>3.6</max-line>       <!-- Absolute maximum -->
+    <label>MACH</label>
+    <precision>2</precision>
+  </instrument>
+  
+  <!-- Control Panel for Manual Overrides -->
+  <control-panel>
+    <name>SR71_Enhanced_Controls</name>
+    <x>450</x>
+    <y>200</y>
+    <w>150</w>
+    <h>300</h>
+    
+    <!-- Inlet Control Mode Switch -->
+    <switch>
+      <name>Inlet_Mode</name>
+      <property>systems/sr71/inlet-auto-mode</property>
+      <positions>
+        <position value="0">MANUAL</position>
+        <position value="1">AUTO</position>
+      </positions>
+      <label>INLET MODE</label>
+    </switch>
+    
+    <!-- Fuel Auto Sequence Switch -->
+    <switch>
+      <name>Fuel_Auto</name>
+      <property>systems/sr71/fuel-auto-sequence</property>
+      <positions>
+        <position value="0">MANUAL</position>
+        <position value="1">AUTO</position>
+      </positions>
+      <label>FUEL AUTO</label>
+    </switch>
+    
+    <!-- Climb-Dive Mode Switch -->
+    <switch>
+      <name>Climb_Dive</name>
+      <property>systems/sr71/climb-dive-mode</property>
+      <positions>
+        <position value="0">OFF</position>
+        <position value="1">ACTIVE</position>
+      </positions>
+      <label>C-D MODE</label>
+    </switch>
+    
+    <!-- Mach Limit Enable -->
+    <switch>
+      <name>Mach_Limit</name>
+      <property>systems/sr71/mach-limit-enable</property>
+      <positions>
+        <position value="0">OFF</position>
+        <position value="1">ON</position>
+      </positions>
+      <label>MACH LMT</label>
+    </switch>
+    
+  </control-panel>
+  
+</PropertyList>

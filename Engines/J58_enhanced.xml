@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+  Enhanced J58 Engine model for SR-71 Blackbird
+  Includes turbo-ramjet transition, inlet spike control, and realistic performance characteristics
+-->
+
+<turbine_engine name="J58_enhanced">
+  <milthrust>34000.0</milthrust>
+  <maxthrust>34000.0</maxthrust>
+  <bypassratio>0.0</bypassratio>
+  <tsfc>0.8</tsfc>
+  <atsfc>1.8</atsfc>
+  <bleed>0.03</bleed>
+  <idlen1>30.0</idlen1>
+  <idlen2>60.0</idlen2>
+  <maxn1>100.0</maxn1>
+  <maxn2>100.0</maxn2>
+  <augmented>1</augmented>
+  <augmethod>1</augmethod>
+  <injected>1</injected>
+  <injection_time>2.0</injection_time>
+  
+  <!-- Enhanced inlet efficiency based on spike position -->
+  <function name="propulsion/engine/inlet-efficiency">
+    <description>Inlet efficiency based on spike position and Mach number</description>
+    <product>
+      <!-- Base efficiency -->
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    0.95
+          0.8    0.96
+          1.0    0.94
+          1.6    0.92
+          2.2    0.88
+          3.0    0.85
+          3.3    0.82
+          3.6    0.80
+        </tableData>
+      </table>
+      <!-- Spike position correction -->
+      <table>
+        <independentVar>systems/sr71/inlet-spike-pos-0</independentVar>
+        <tableData>
+          0.0    0.90   <!-- Fully retracted - poor efficiency at high speed -->
+          0.3    0.95
+          0.6    0.98
+          0.85   1.00   <!-- Optimal position -->
+          1.0    0.97   <!-- Fully extended -->
+        </tableData>
+      </table>
+    </product>
+  </function>
+  
+  <!-- Turbo-ramjet transition characteristics -->
+  <function name="propulsion/engine/ramjet-thrust-factor">
+    <description>Additional thrust from ramjet mode</description>
+    <product>
+      <property>systems/sr71/turbo-ramjet-mode</property>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          2.2    1.0    <!-- Transition begins -->
+          2.5    1.1    <!-- 10% thrust increase -->
+          3.0    1.2    <!-- 20% thrust increase -->
+          3.3    1.25   <!-- 25% thrust increase -->
+          3.6    1.15   <!-- Slight decrease at max speed -->
+        </tableData>
+      </table>
+    </product>
+  </function>
+  
+  <!-- Compressor Inlet Temperature (CIT) calculation -->
+  <function name="propulsion/engine/cit-degc">
+    <description>Compressor Inlet Temperature in Celsius</description>
+    <sum>
+      <product>
+        <property>atmosphere/T-R</property>
+        <value>0.555556</value> <!-- Convert Rankine to Celsius -->
+        <difference>
+          <value>1.0</value>
+          <product>
+            <value>0.2</value>
+            <property>velocities/mach</property>
+            <property>velocities/mach</property>
+          </product>
+        </difference>
+      </product>
+      <value>-273.15</value> <!-- Convert to Celsius -->
+    </sum>
+  </function>
+  
+  <!-- Engine damage based on CIT -->
+  <function name="propulsion/engine/damage-factor">
+    <description>Engine damage due to overheating</description>
+    <table>
+      <independentVar>propulsion/engine/cit-degc</independentVar>
+      <tableData>
+        300    0.0    <!-- No damage below 300°C -->
+        350    0.1    <!-- Light damage -->
+        400    0.3    <!-- Moderate damage -->
+        427    0.6    <!-- Heavy damage at CIT limit -->
+        450    1.0    <!-- Complete failure -->
+      </tableData>
+    </table>
+  </function>
+  
+  <!-- Fuel flow characteristics for JP-7 -->
+  <function name="propulsion/engine/fuel-flow-rate">
+    <description>Fuel flow rate in lbs/hr</description>
+    <product>
+      <property>propulsion/engine/thrust-lbs</property>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    0.8    <!-- TSFC at static conditions -->
+          0.9    0.75
+          1.5    0.85
+          2.2    1.2    <!-- Higher consumption in transition -->
+          3.0    1.8    <!-- Afterburner consumption -->
+          3.3    2.0    <!-- Peak consumption -->
+        </tableData>
+      </table>
+      <!-- Ramjet efficiency improvement -->
+      <table>
+        <independentVar>systems/sr71/turbo-ramjet-mode</independentVar>
+        <tableData>
+          0.0    1.0    <!-- Pure turbojet -->
+          1.0    0.9    <!-- 10% fuel efficiency improvement in ramjet mode -->
+        </tableData>
+      </table>
+    </product>
+  </function>
+  
+  <!-- Altitude performance -->
+  <function name="propulsion/engine/altitude-factor">
+    <description>Thrust variation with altitude</description>
+    <table>
+      <independentVar>position/h-sl-ft</independentVar>
+      <tableData>
+        0        1.0
+        10000    0.95
+        20000    0.88
+        30000    0.80
+        40000    0.70
+        50000    0.58
+        60000    0.45
+        70000    0.32
+        80000    0.20
+        85000    0.15   <!-- Service ceiling -->
+        90000    0.10
+      </tableData>
+    </table>
+  </function>
+  
+</turbine_engine>

@@ -12,6 +12,39 @@ v 0.2.1
 +damage.nas installed (currently always-on, will be switchable in later versions)
 +Nasal file restructure
 
+v1.0 - Enhanced Edition
+----------------------
+MAJOR SYSTEM OVERHAUL:
+- Complete rewrite of engine systems with authentic J58 turbo-ramjet simulation
+- Automatic turbo-ramjet transition above Mach 2.2 at 40,000+ ft
+- Enhanced inlet spike control system with automatic positioning
+- Realistic Compressor Inlet Temperature (CIT) monitoring with 427°C limit
+- Advanced fuel management with automatic center of gravity control
+- Climb-dive procedure automation for transonic acceleration
+- Flight envelope protection with unstart prevention
+- Enhanced aerodynamics with inlet efficiency effects
+- Comprehensive cockpit instrumentation upgrade
+- System health monitoring and status displays
+- Realistic performance characteristics based on declassified data
+
+NEW FEATURES:
+- Inlet spike position indicators and manual override
+- Turbo-ramjet mode status and bypass ratio displays
+- CIT gauges for both engines with warning systems
+- Fuel transfer automation and CG management
+- Engine unstart protection and automatic restart
+- Mach limit enforcement with pilot override
+- Enhanced flight dynamics for all speed regimes
+- Authentic operational procedures implementation
+
+IMPROVED SYSTEMS:
+- J58 engine model with altitude-dependent performance
+- Realistic fuel consumption curves for JP-7
+- Enhanced drag characteristics with ramjet efficiency
+- Proper fuel sequencing across all tanks
+- Smooth inlet spike movement with kinematic delays
+- Advanced flight envelope monitoring
+
 v 0.2.2
 ------
 +Removed speed and thrust restrictions.

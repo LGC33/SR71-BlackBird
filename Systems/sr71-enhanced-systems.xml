@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<!--
+  Enhanced SR-71 Systems Configuration
+  Includes inlet spike control, fuel management, turbo-ramjet transition, and flight envelope protection
+-->
+
+<system name="SR71_Enhanced_Systems">
+
+  <!-- Inlet Spike Control System -->
+  <channel name="Inlet_Spike_Control">
+    
+    <!-- Automatic spike position based on Mach number -->
+    <scheduled_gain name="systems/sr71/inlet-spike-auto-pos">
+      <input>velocities/mach</input>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    0.0    <!-- Fully retracted -->
+          1.0    0.0
+          1.6    0.3    <!-- Partial extension -->
+          2.2    0.6    <!-- Extended -->
+          3.0    0.85   <!-- Nearly full -->
+          3.6    1.0    <!-- Fully extended -->
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+    <!-- Manual override capability -->
+    <switch name="systems/sr71/inlet-spike-pos-0">
+      <default value="systems/sr71/inlet-spike-auto-pos"/>
+      <test logic="AND" value="fcs/inlet-spike-manual-0">
+        systems/sr71/inlet-manual-mode == 1
+      </test>
+    </switch>
+    
+    <switch name="systems/sr71/inlet-spike-pos-1">
+      <default value="systems/sr71/inlet-spike-auto-pos"/>
+      <test logic="AND" value="fcs/inlet-spike-manual-1">
+        systems/sr71/inlet-manual-mode == 1
+      </test>
+    </switch>
+    
+    <!-- Inlet efficiency calculation -->
+    <scheduled_gain name="systems/sr71/inlet-efficiency-0">
+      <input>velocities/mach</input>
+      <table>
+        <independentVar lookup="row">velocities/mach</independentVar>
+        <independentVar lookup="column">systems/sr71/inlet-spike-pos-0</independentVar>
+        <tableData>
+                    0.0    0.3    0.6    0.85   1.0
+          0.0       0.95   0.95   0.95   0.95   0.95
+          1.0       0.90   0.93   0.95   0.96   0.95
+          1.6       0.85   0.90   0.94   0.96   0.94
+          2.2       0.80   0.87   0.92   0.95   0.92
+          3.0       0.75   0.83   0.88   0.92   0.88
+          3.6       0.70   0.80   0.85   0.90   0.85
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+    <scheduled_gain name="systems/sr71/inlet-efficiency-1">
+      <input>velocities/mach</input>
+      <table>
+        <independentVar lookup="row">velocities/mach</independentVar>
+        <independentVar lookup="column">systems/sr71/inlet-spike-pos-1</independentVar>
+        <tableData>
+                    0.0    0.3    0.6    0.85   1.0
+          0.0       0.95   0.95   0.95   0.95   0.95
+          1.0       0.90   0.93   0.95   0.96   0.95
+          1.6       0.85   0.90   0.94   0.96   0.94
+          2.2       0.80   0.87   0.92   0.95   0.92
+          3.0       0.75   0.83   0.88   0.92   0.88
+          3.6       0.70   0.80   0.85   0.90   0.85
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+  </channel>
+  
+  <!-- Turbo-Ramjet Transition System -->
+  <channel name="Turbo_Ramjet_Transition">
+    
+    <!-- Transition logic -->
+    <switch name="systems/sr71/turbo-ramjet-mode">
+      <default value="0"/>
+      <test logic="AND" value="1">
+        velocities/mach >= 2.2
+        position/h-sl-ft >= 40000
+        propulsion/engine[0]/thrust-lbs > 1000
+        propulsion/engine[1]/thrust-lbs > 1000
+      </test>
+    </switch>
+    
+    <!-- Bypass ratio calculation -->
+    <scheduled_gain name="systems/sr71/bypass-ratio-0">
+      <input>velocities/mach</input>
+      <gain>systems/sr71/turbo-ramjet-mode</gain>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          2.2    0.0    <!-- No bypass at transition -->
+          2.5    0.2    <!-- 20% bypass -->
+          3.0    0.4    <!-- 40% bypass -->
+          3.3    0.6    <!-- 60% bypass -->
+          3.6    0.6    <!-- Max bypass -->
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+    <scheduled_gain name="systems/sr71/bypass-ratio-1">
+      <input>velocities/mach</input>
+      <gain>systems/sr71/turbo-ramjet-mode</gain>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          2.2    0.0
+          2.5    0.2
+          3.0    0.4
+          3.3    0.6
+          3.6    0.6
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+  </channel>
+  
+  <!-- Fuel Management System -->
+  <channel name="Fuel_Management">
+    
+    <!-- Center of gravity management -->
+    <scheduled_gain name="systems/sr71/fuel-cg-target">
+      <input>velocities/mach</input>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    0.25   <!-- Forward CG for low speed -->
+          1.0    0.28
+          2.0    0.32   <!-- Aft CG for high speed stability -->
+          3.0    0.35
+          3.6    0.37   <!-- Maximum aft CG -->
+        </tableData>
+      </table>
+    </scheduled_gain>
+    
+    <!-- Fuel transfer logic -->
+    <switch name="systems/sr71/fuel-transfer-active">
+      <default value="0"/>
+      <test logic="AND" value="1">
+        systems/sr71/fuel-auto-sequence == 1
+        velocities/mach > 2.0
+        propulsion/tank[3]/contents-lbs > propulsion/tank[7]/contents-lbs + 1000
+      </test>
+    </switch>
+    
+  </channel>
+  
+  <!-- Flight Envelope Protection -->
+  <channel name="Flight_Envelope_Protection">
+    
+    <!-- Compressor Inlet Temperature monitoring -->
+    <scheduled_gain name="systems/sr71/cit-engine-0">
+      <input>atmosphere/T-R</input>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    1.0
+          1.0    1.2
+          2.0    2.8
+          3.0    6.4
+          3.3    8.0
+          3.6    10.0
+        </tableData>
+      </table>
+      <output>systems/sr71/cit-engine-0-degc</output>
+    </scheduled_gain>
+    
+    <scheduled_gain name="systems/sr71/cit-engine-1">
+      <input>atmosphere/T-R</input>
+      <table>
+        <independentVar>velocities/mach</independentVar>
+        <tableData>
+          0.0    1.0
+          1.0    1.2
+          2.0    2.8
+          3.0    6.4
+          3.3    8.0
+          3.6    10.0
+        </tableData>
+      </table>
+      <output>systems/sr71/cit-engine-1-degc</output>
+    </scheduled_gain>
+    
+    <!-- Engine unstart protection -->
+    <switch name="systems/sr71/unstart-protection">
+      <default value="0"/>
+      <test logic="OR" value="1">
+        velocities/mach > 3.53
+        systems/sr71/cit-engine-0-degc > 427
+        systems/sr71/cit-engine-1-degc > 427
+      </test>
+    </switch>
+    
+    <!-- Mach limit enforcement -->
+    <switch name="systems/sr71/mach-limit-active">
+      <default value="0"/>
+      <test logic="AND" value="1">
+        velocities/mach > 3.5
+        systems/sr71/mach-limit-enable == 1
+      </test>
+    </switch>
+    
+  </channel>
+  
+  <!-- Climb-Dive Procedure Automation -->
+  <channel name="Climb_Dive_Procedure">
+    
+    <!-- Phase detection -->
+    <switch name="systems/sr71/climb-dive-phase">
+      <default value="0"/>  <!-- 0 = inactive -->
+      <test logic="AND" value="1">  <!-- 1 = diving -->
+        systems/sr71/climb-dive-mode == 1
+        position/h-sl-ft > 32000
+        position/h-sl-ft lt 34000
+        velocities/mach lt 1.0
+      </test>
+      <test logic="AND" value="2">  <!-- 2 = accelerating -->
+        systems/sr71/climb-dive-mode == 1
+        position/h-sl-ft lt 31000
+        velocities/vc-kts lt 450
+      </test>
+      <test logic="AND" value="3">  <!-- 3 = climbing -->
+        systems/sr71/climb-dive-mode == 1
+        velocities/vc-kts >= 450
+      </test>
+    </switch>
+    
+  </channel>
+  
+  <!-- System Status and Monitoring -->
+  <channel name="System_Status">
+    
+    <!-- Overall system health -->
+    <summer name="systems/sr71/system-health">
+      <input>systems/sr71/inlet-efficiency-0</input>
+      <input>systems/sr71/inlet-efficiency-1</input>
+      <bias>-1.6</bias>  <!-- Normalize to 0-1 scale -->
+      <clipto>
+        <min>0.0</min>
+        <max>1.0</max>
+      </clipto>
+    </summer>
+    
+    <!-- Engine status -->
+    <switch name="systems/sr71/engines-operational">
+      <default value="1"/>
+      <test logic="AND" value="0">
+        systems/sr71/engines-unstarted == 1
+      </test>
+    </switch>
+    
+  </channel>
+  
+</system>

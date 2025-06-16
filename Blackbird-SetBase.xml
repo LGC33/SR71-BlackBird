@@ -5,16 +5,20 @@
 
     <sim>
         <systems>
-            <autopilot>
-                <path>Aircraft/SR71-BlackBird/Systems/SR71autopilot.xml</path>
-            </autopilot>
-            <electrical>
-                <path>Aircraft/SR71-BlackBird/Systems/dummy-electrical.xml</path>
-            </electrical>
-            <autoflight>
-                <serviceable type="bool">true</serviceable>
-            </autoflight>
-        </systems>
+        <autopilot>
+            <path>Aircraft/SR71-BlackBird/Systems/sr71-autopilot.xml</path>
+        </autopilot>
+        <electrical>
+            <path>Aircraft/SR71-BlackBird/Systems/electrical.xml</path>
+        </electrical>
+        <autoflight>
+            <serviceable type="bool">true</serviceable>
+        </autoflight>
+        <!-- Enhanced SR-71 Systems -->
+        <property-rule>
+            <path>Aircraft/SR71-BlackBird/Systems/sr71-enhanced-systems.xml</path>
+        </property-rule>
+    </systems>
         <rendering>
                 <redout>
                     <red>0</red>
